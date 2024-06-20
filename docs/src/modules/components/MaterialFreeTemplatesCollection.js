@@ -5,9 +5,13 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Visibility from '@mui/icons-material/Visibility';
 import CodeRoundedIcon from '@mui/icons-material/CodeRounded';
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import { useTranslate } from '@mui/docs/i18n';
 import { useTheme } from '@mui/material/styles';
 
@@ -78,11 +82,22 @@ function layouts(translatation, theme) {
 export default function Templates() {
   const translatation = useTranslate();
   const theme = useTheme();
+  const [templateTheme, setTemplateTheme] = React.useState('');
+
+  const handleChange = (event) => {
+    setTemplateTheme(event.target.value);
+  };
 
   return (
-    <Grid container spacing={2} sx={{ py: 2 }}>
+    <Stack gap={4}>
       {layouts(translatation, theme).map((layout) => (
-        <Grid item xs={12} sm={6} key={layout.title}>
+        <Stack gap={1} key={layout.title}>
+          <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 'semiBold' }}>
+            {layout.title}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+            {layout.description}
+          </Typography>
           <Card
             variant="outlined"
             sx={{
@@ -92,28 +107,62 @@ export default function Templates() {
               borderColor: 'divider',
             }}
           >
-            <CardMedia
-              component="img"
-              image={layout.src}
-              title={layout.title}
+            <Box
               sx={{
-                aspectRatio: '16 / 9',
-                objectPosition: 'top',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
+                position: 'relative',
+                '&:hover button': {
+                  opacity: 1,
+                },
+                '&:hover img': {
+                  filter: 'brightness(0.5)',
+                  transition: 'filter 0.5s',
+                },
               }}
-            />
-            <Box sx={{ p: 2, pt: 1.5 }}>
-              <Typography component="h3" variant="body1" sx={{ fontWeight: 'semiBold' }}>
-                {layout.title}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                {layout.description}
-              </Typography>
+            >
+              <CardMedia
+                component="img"
+                image={layout.src}
+                title={layout.title}
+                sx={{
+                  aspectRatio: '16 / 9',
+                  objectPosition: 'top',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                  '&:hover': {
+                    filter: 'brightness(0.8)',
+                    transition: 'filter 0.5s',
+                  },
+                }}
+              />
+              <Button
+                size="small"
+                variant="contained"
+                color="secondary"
+                sx={{
+                  position: 'absolute',
+                  bottom: '50%',
+                  right: '50%',
+                  transform: 'translate(50%, 50%)',
+                  opacity: 0,
+                  transition: 'opacity 0.3s',
+                }}
+              >
+                Live preview
+              </Button>
+            </Box>
+            <Box
+              sx={{
+                p: 2,
+                pt: 1.5,
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                backgroundColor: 'background.paper',
+              }}
+            >
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
                   gap: 1,
                   mt: 'auto',
                 }}
@@ -122,7 +171,6 @@ export default function Templates() {
                   component="a"
                   href={layout.href}
                   size="small"
-                  fullWidth
                   variant="outlined"
                   color="secondary"
                   startIcon={<Visibility sx={{ mr: 0.5 }} />}
@@ -136,7 +184,6 @@ export default function Templates() {
                   component="a"
                   href={layout.source}
                   size="small"
-                  fullWidth
                   variant="outlined"
                   color="secondary"
                   startIcon={<CodeRoundedIcon sx={{ mr: 0.5 }} />}
@@ -144,10 +191,44 @@ export default function Templates() {
                   Source code
                 </Button>
               </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                  mt: 'auto',
+                }}
+              >
+                <Button
+                  component="a"
+                  href={layout.href}
+                  size="small"
+                  variant="text"
+                  color="primary"
+                  startIcon={<ContentCopyRoundedIcon sx={{ mr: 0.5 }} />}
+                  data-ga-event-category="material-ui-template"
+                  data-ga-event-label={layout.title}
+                  data-ga-event-action="preview-img"
+                >
+                  Copy theme
+                </Button>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={templateTheme}
+                  size="small"
+                  displayEmpty
+                  onChange={handleChange}
+                  sx={{ width: '180px' }}
+                >
+                  <MenuItem value="">Material Design 2</MenuItem>
+                  <MenuItem value={1}>Sober</MenuItem>
+                  <MenuItem value={2}>Sleek</MenuItem>
+                </Select>
+              </Box>
             </Box>
           </Card>
-        </Grid>
+        </Stack>
       ))}
-    </Grid>
+    </Stack>
   );
 }
